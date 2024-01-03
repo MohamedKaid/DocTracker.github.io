@@ -1,0 +1,24 @@
+sqlite3 docTracker.db .dump > backup.sql
+
+sqlite3 docTracker.db
+
+### ONCE YOU ARE IN THE SQLITE3 OF YOUR DATABASE ####
+
+   ##Create a temp table and copy all data from your table then drop your table
+    	CREATE TABLE temp_table AS SELECT * FROM Dispatch;
+	DROP TABLE temp_table;
+   
+   ##Create the table you want with the attributes you want and constraints##
+	CREATE TABLE Dispatch( dispatch_id INTEGER PRIMARY KEY AUTOINCREMENT, name 		    VARCHAR(50) COLLATE NOCASE, email VARCHAR(100) UNIQUE, pin INTEGER);
+   
+   ##Insert your old data into the new created data from the temp table then drop it ##
+	INSERT INTO Dispatch SELECT * FROM temp_table;
+	DROP TABLE temp_table;
+
+   ## You can check if the data is there the way you want it then quit from sqlite3##
+	SELECT * FROM Dispatch;
+	.quit
+
+## this is the step if you want the back up to be restored back into the db##
+
+sqlite3 docTracker.db < backup.sql

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('serve_css', filename='listStyle.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>DocTracker</title>
+</head>
+<body>
+    <!-- User's name header -->
+    <h1>{{ user }}</h1>
+
+    <!-- Account settings -->
+    <div style="text-align: center;">
+        <a style="display: inline-block; color: black;" href="{{ url_for('account.settings') }}">Account Settings</a>
+    </div>
+
+    <!-- Search and Add button -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search..." style="width:60%">
+        <button class="button addDriver" id="rotate-button" onclick="showDriverForm()">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <!-- Add driver form -->
+    <div id="add-data-form" style="display: none;">
+        <form class="form" style="width: 80%; margin: auto;"action="/update" method="POST">
+            <input type="hidden" name="form-type" value="driver">
+            <div class="form-row" style="text-align: center;">
+                <div class="form-group col">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" class="form-control bg-light text-dark rounded" name="first_name" required style="width: 80%; margin:auto;">
+                </div>
+                <div class="form-group col">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" class="form-control bg-light text-dark rounded" name="last_name" required style="width: 80%; margin:auto;">
+                </div>
+            </div>
+            
+            <div class="text-center">
+            <button type="submit" class="btn btn-primary mx-auto" style="margin-bottom: 5%;">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Error modal for driver already exist -->
+    <div class="modal fade" id="validationErrorModal" tabindex="-1" role="dialog" aria-labelledby="validationErrorModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-center">
+                    <h5 class="modal-title" id="validationErrorModal">Validation Error</h5>
+                </div>
+                <div class="modal-body d-flex justify-content-center">
+                    <p id="validationErrorMessage"></p>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table tabs -->
+    <div class="tab-container">
+        <div class="row justify-content-center mt-4">
+            <div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="drivers-tab" data-toggle="tab" href="#drivers" role="tab" aria-controls="drivers" aria-selected="true">Drivers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="documents-tab" data-toggle="tab" href="#documents" role="tab" aria-controls="documents" aria-selected="false">Documents</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content" id="myTabContent">
+        <!-- Drivers tab content -->
+        <div class="tab-pane fade show active" id="drivers" role="tabpanel" aria-labelledby="drivers-tab">
+            <table id="driver-table">
+
+                <!-- Header -->
+                <th>Name</th>
+
+                <tbody id="dataBody">
+                    {% for driver in driverData %}
+
+                    <!-- Driver row with buttons -->
+                    <tr class="clickable-row" id="row-{{ driver.id }}">
+                        <td>
+                            <span style="display: inline block;">{{ driver.name }}</span>
+                            <span style="float: right; margin-right: 5%;">
+                                <button class="settings-button d-none" onclick="settings(event)">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </span>
+        
+                            <span style="float: right; margin-right: 5%;">
+                                <button class="button addDoc d-none" onclick="showDocumenetForm(event)">
+                                    <i class="fas fa-plus" style="font-size: smaller;"></i>
+                                </button>
+                            </span>
+                            <span style="float: right; margin-right: 5%;">
+                                <button class="button delete d-none" onclick="deleteDriver('{{driver.id}}')">
+                                    <i class="fas fa-minus" style="font-size: smaller;"></i>
+                                </button>
+                            </span>
+                        </td>
+                    </tr>
+
+                    <!-- Add document form and Documents sub-table -->
+                    <tr class="sub-table d-none" id="subtable-{{driver.id}}">
+                        <td>
+                            <div class="add-doc-form d-none">
+                                <!-- Form -->
+                                <form class="form" style="width: 80%; margin: auto;" action="/update" method="POST" driver-id="{{ driver.id }}">
+                                    <input type="hidden" name="form-type" value="document">
+                                    <input type="hidden" name="driver_id" value="{{ driver.id }}">
+                                    <div class="form-row" style="text-align: center;">
+                                        <div class="form-group col">
+                                            <label for="first_name">Document Name:</label>
+                                            <input type="text" class="form-control bg-light text-dark rounded" name="doc_name" required style="width: 80%; margin:auto;">
+                                        </div>
+                                        <div class="form-group col">
+                                            <label for="last_name">Expiration Date:</label>
+                                            <input type="date" class="form-control bg-light text-dark rounded" name="exp_date" required style="width: 80%; margin:auto;">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-center">
+                                    <button type="submit" class="btn btn-primary mx-auto" style="margin-bottom: 5%;">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Sub-table -->
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Document</th>
+                                        <th>Expiration Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for doc in driver.documents %}
+                                    <tr>
+                                        <td>{{ doc.name }}</td>
+                                        <td>
+                                            <span style="display: inline block;">{{ doc.date }}</span>
+                                            <span style="float: right; margin-right: 3%;">
+                                                <button class="button delete d-none" onclick="deleteDocument('{{doc.name}}', '{{doc.date}}', '{{driver.id}}')">
+                                                    <i class="fas fa-minus" style="font-size: smaller;"></i>
+                                                </button>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Documents tab content -->
+        <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+            <table id="doc-table">
+                <th>Document</th><th>Driver</th><th>Date</th>
+                <tbody id="dataBody">
+                    {% for doc in docData %}
+                    <tr>
+                        <td>
+                            {{ doc.name }}
+                        </td>
+                        <td>
+                            {{ doc.driverName }}
+                        </td>
+                        <td>
+                            {{ doc.date }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../static/listScript.js"></script>
+</body>
+</html>

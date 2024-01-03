@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Settings</title>
+  <link rel="stylesheet" href="{{ url_for('serve_css', filename='settingsStyle.css') }}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div class="container">
+        <h1 class="title">Account Settings</h1>
+        <h2 class="title" style="margin-bottom: 30px;">{{ user }}</h2>
+
+        <div class="options">
+            <button class="change-email">Change Email</button>
+            <button class="change-password">Change Pin</button>
+        </div>
+
+        <div class="update-form hidden">
+          <form class="settings-form">
+              <label for="current-password">Current Pin:</label>
+              <input type="password" pattern="[0-9]*" maxlength="4" id="current-password" name="current-password" placeholder="Enter your current password" required>
+              
+              <p id="error-message" style="color: red; margin-top: 0;"></p>
+              
+              <label for="new-value"></label>
+              <input type="text" id="new-value" name="new-value" placeholder="" required>
+              
+              <button class="submit-button" type="submit">Update</button>
+          </form>
+        </div>
+
+        <div class="links">
+          <a href="{{ url_for('data.loadData') }}" class="redirect">Return</a>
+          </br>
+          <a href="{{ url_for('account.logout') }}" class="redirect">Log Out</a>
+        </div>
+  </div>
+
+  <script src="../static/settingsScript.js"></script>
+</body>
+</html>
+

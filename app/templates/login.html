@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DocTracker</title>
+  <link rel="stylesheet" href="{{ url_for('serve_css', filename='settingsStyle.css') }}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>DocTracker</h1>
+        
+        <div class="update-form">
+            <form id="form" action="/log-in" class="settings-form" method="post">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">Pin:</label>
+                <input type="password" pattern="[0-9]*" maxlength="4" id="password" name="pin" placeholder="" required>
+                
+                <p id="error-message" style="color:rgb(186, 30, 30); margin-top: 0;">
+                    <!-- TODO: <a>Reset password</a> -->
+                </p>
+                
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <a href="{{ url_for('data.signup') }}" class="redirect">New User</a>
+        <a href="{{ url_for('auth.forgotPin') }}" class="redirect" style="margin-left: 5%;">Forgot Pin</a>
+    </div>
+
+    <!-- <script src="../frontEnd/settingsScript.js"></script> -->
+    <script>
+        document.getElementById('form').addEventListener('submit', function(event) {
+            // Prevent form submission
+            event.preventDefault();
+
+            // Clear error message
+            $('#error-message').text('');
+
+            // Email and pin entered
+            var formData = new FormData(this);
+
+            // Request that will pass data and receive response
+            $.ajax({
+                url: "{{ url_for('auth.logIn') }}",
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function() {
+                    // Redirect on successful login
+                    window.location.href = "{{ url_for('data.loadData') }}";
+                },
+                error: function(xhr, status, error) {
+                    // Show incorrect credentials message
+                    if(xhr.status === 400) {
+                        var errorMessage = xhr.responseJSON.error ? xhr.responseJSON.error : 'Incorrect email or pin';
+                        $('#error-message').text(errorMessage);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

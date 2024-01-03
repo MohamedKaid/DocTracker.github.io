@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DocTracker</title>
+  <link rel="stylesheet" href="{{ url_for('serve_css', filename='settingsStyle.css') }}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Pin Recovery</h1>
+        
+        <div class="update-form">
+            <form id="form" class="settings-form" method="post">
+                <input type="hidden" id="token" name="token" value="{{ token }}">
+                <label for="email">Enter New Pin:</label>
+                <input type="password" pattern="[0-9]*" maxlength="4" id="new_pin" name="new_pin" required>
+                
+                <p id="error-message" style="margin-top: 0; color:rgb(186, 30, 30);"></p>
+                
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <a href="{{ url_for('index') }}" class="redirect">Return</a>
+    </div>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', function(event) {
+            // Prevent form submission
+            event.preventDefault();
+
+            // Clear error message
+            $('#error-message').text("");
+
+            // Email and pin entered
+            var formData = new FormData(this);
+
+            // Request that will pass data and receive response
+            $.ajax({
+                url: '/auth/reset-pin/' + $('#token').val(),
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function() {
+                    // Redirect on successful login
+                    window.location.href = '/';
+                },
+                error: function(xhr, status, error) {
+                    // Show incorrect credentials message
+                    if(xhr.status === 400) {
+                        var errorMessage = xhr.responseJSON.error ? xhr.responseJSON.error : 'Email Does not exist';
+                        $('#error-message').text(errorMessage);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

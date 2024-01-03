@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.search-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(90deg);
+    }
+}
+
+@keyframes rotate-reverse {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-90deg);
+    }
+}
+
+.button.addDriver.rotate i {
+    animation: rotate 0.1s linear;
+}
+
+.button.addDriver.rotate-reverse i {
+    animation: rotate-reverse 0.1s linear;
+}
+
+.button {
+    margin-left: 10px;
+    display:inline-block;
+    vertical-align: middle;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button.addDriver {
+    padding: 8px 12px;
+}
+
+
+.button.delete {
+    background-color: #dc3545;
+}
+
+.button.addDoc,
+.button.delete {
+    height: 25px;
+    display: flex;
+    align-items: center;
+}
+
+button:active,
+button:focus {
+    outline: none;
+}
+
+table {
+    border-collapse: collapse;
+    width: 80%;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr {
+    height: 50px;
+    font-size: large;
+}
+
+.settings-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    position: absolute;
+    text-align: right;
+}
+
+.nav-tabs .nav-item {
+    text-align: center;
+}
+
+.nav-link {
+    color: black;
+}
